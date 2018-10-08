@@ -13,7 +13,7 @@ ssh自动连接脚本生成器
 #### 安装方法：
     方法1：将python文件放在 /usr/bin/ 或者 /usr/local/bin/ 目录，并赋予可执行权限 sudo chmod a+x ssh-generator
     
-    方法2：直接deb包安装 -> [下载deb包](https://github.com/smallcham/ssh-generator/releases)
+    方法2：直接deb包安装 -> 
     
 [下载deb包](https://github.com/smallcham/ssh-generator/releases)
 
