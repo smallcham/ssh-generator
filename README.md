@@ -3,6 +3,9 @@ ssh自动连接脚本生成器
 
 #### 此脚本主要为了方便linux环境下的运维工作，又不想装一个类似xshell的软件多此一举
 
+#### 操作系统:
+    ubuntu
+
 #### 依赖：
     1. python3
     2. expect (ubuntu下安装 > sudo apt-get -y install expect)
