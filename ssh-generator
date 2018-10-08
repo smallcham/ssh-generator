@@ -1,0 +1,54 @@
+#!/usr/bin/python3
+#coding=utf-8
+
+import sys, os, uuid
+
+def help():
+    print('\n1. 首先创建ssh自动连接expect脚本: ssh-generator [hostname] [ip] [username] [password] [port]\n')
+    print('2. 然后创建打开连接shell: ssh-generator [hostname]\n')
+    print('# 如果您想同时打开多个ssh连接，那么您可以使用相同的 [hostname] 创建连接脚本，当您运行连接脚本时，将同时打开相同 [hostname] 的远程连接\n')
+    sys.exit()
+
+if __name__ == '__main__':
+    USER_DIR = os.environ['HOME']
+    name = ''
+    if (len(sys.argv) < 2):
+        help()
+    else:
+        name = sys.argv[1]
+        if name.startswith('-'):
+            help()
+
+    if (os.path.isdir(USER_DIR + '/host/') is False): os.makedirs(USER_DIR + '/host/')
+
+    if (len(sys.argv) <= 2):
+        show = '#!/bin/sh\n'
+        try:
+            files = os.listdir(USER_DIR + '/host/' + name)
+        except:
+            print('\n\033[1;31;40m没有找到目录 [%s] 请确认您是否已生成expect脚本!\033[0m\n' % (USER_DIR + '/host/' + name))
+            sys.exit()
+        for filename in files:
+            show += 'gnome-terminal -x bash -c \"%s\"\n' % ('~/host/' + name + '/' + filename)
+        with open(os.path.join(USER_DIR + '/host', name + '.show'), 'wt') as f:
+            f.write(show)
+        os.system('chmod a+x ' + os.path.join(USER_DIR + '/host', name + '.show'))
+        print('\n\033[1;32;40m  脚本创建成功，执行命令 `~/host/%s.show` 自动ssh登录\033[0m\n' % name)
+        sys.exit()
+
+    ip = sys.argv[2]
+    user = sys.argv[3]
+    pwd = sys.argv[4]
+    port = sys.argv[5] if len(sys.argv )>= 6 else '22'
+        
+
+    if (os.path.isdir(USER_DIR + '/host/' + name) is False): os.makedirs(USER_DIR + '/host/' + name)
+
+    exp = '#!/usr/bin/expect\nset timeout 20\nspawn sudo ssh %s@%s -p %s\nexpect { \n\"*yes/no\" { send \"yes\\r\"; exp_continue}\n\"*password:\" { send \"%s\\r\"}\n}\ninteract' % (user, ip, port, pwd)
+    filename = name + '.exp.' + str(uuid.uuid1())
+
+    with open(os.path.join(USER_DIR + '/host', name, filename), 'wt') as f:
+        f.write(exp)
+    os.system('chmod a+x ' + os.path.join(USER_DIR + '/host', name, filename))
+
+    print('\n\033[1;32;40m  创建expect脚本成功，请继续执行命令 `ssh-generator %s`\033[0m\n' % name)
